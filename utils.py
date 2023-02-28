@@ -25,6 +25,12 @@ def find_closest_centroid(centroids: List[Point], p: Point):
     return index_closest_centroid, min_dist
 
 
+def find_closest_centroid_optim(centroids: List[Point], p: Point):
+    dist_centroids_point = np.linalg.norm(centroids - p, axis=1)
+    index_closest_centroid = dist_centroids_point.argmin()
+    return index_closest_centroid, dist_centroids_point[index_closest_centroid]
+
+
 def make_plot_distortion(directory: str, method: str):
     with open(os.path.join(directory, f"distortion.txt"), "r") as f_distortion:
         distortion_per_step = csv.reader(f_distortion, delimiter=',')

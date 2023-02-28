@@ -53,7 +53,7 @@ def clvq_method(N: int, n: int, nbr_iter: int):
             t.set_postfix(distortion=distortion, nbr_gradient_iter=(step+1)*M)
 
             # This is only useful when plotting the results
-            save_results(centroids, probas, distortion, step, M, method='clvq')
+            # save_results(centroids, probas, distortion, step, M, method='clvq')
 
-    make_gif(get_directory(N, M, method='clvq'))
+    # make_gif(get_directory(N, M, method='clvq'))
     return centroids, probas, distortion

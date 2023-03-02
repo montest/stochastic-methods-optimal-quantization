@@ -36,12 +36,12 @@ def lloyd_method(N: int, M: int, nbr_iter: int, device:str):
           for step in t:
               # x = torch.tensor(torch.randn(M) * sigma + mean, dtype=torch.float32)
               # # quick method
-              # # Compute the thresholds that separate the quantization levels
-              thresholds = 0.5 * (centroids[:-1] + centroids[1:])
+              # # Compute the vertices that separate the quantization levels
+              vertices = 0.5 * (centroids[:-1] + centroids[1:])
 
               #
               # # Assign each sample to the closest quantization level
-              indices = torch.sum(x[:, None] >= thresholds[None, :], dim=1).long()
+              indices = torch.sum(x[:, None] >= vertices[None, :], dim=1).long()
 
               # slow one
               #dist_centroids_points = torch.norm(centroids - x.view(M, 1, 1), dim=1)
@@ -70,8 +70,8 @@ def lloyd_method(N: int, M: int, nbr_iter: int, device:str):
               # x = torch.tensor(x, dtype=torch.float32)
 
       # Compute the probability of each centroid
-      thresholds = 0.5 * (centroids[:-1] + centroids[1:])
-      indices = torch.sum(x[:, None] >= thresholds[None, :], dim=1).long()
+      vertices = 0.5 * (centroids[:-1] + centroids[1:])
+      indices = torch.sum(x[:, None] >= vertices[None, :], dim=1).long()
       # probabilities = np.array([x[indices == i].size()[0] for i in range(N)])/float(M)
       probabilities = torch.bincount(indices).to('cpu').numpy()/float(M)
 

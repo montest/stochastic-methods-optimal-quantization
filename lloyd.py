@@ -90,25 +90,48 @@ def lloyd_method_optim_bis(N: int, M: int, nbr_iter: int, dim: int = 1):
     centroids = centroids.reshape((N, dim))
     print(centroids)
 
-    distortion = 0
     with trange(nbr_iter, desc='Lloyd method') as t:
         for step in t:
-
             dist_centroids_points = np.linalg.norm(centroids - xs.reshape(M, 1, dim), axis=2)
             index_closest_centroid = dist_centroids_points.argmin(axis=1)
 
             # Compute the new quantization levels as the mean of the samples assigned to each level
             centroids = np.array([np.mean(xs[index_closest_centroid == i], axis=0) for i in range(N)])
-            # distortion = np.mean(dist_centroids_points[np.arange(M), index_closest_centroid] ** 2) * 0.5
-            # compute probas
-            # probabilities = np.bincount(index_closest_centroid) / float(M)
-            # local_count = np.array([xs[index_closest_centroid == i].shape[0] for i in range(N)])
 
             # t.set_postfix(distortion=distortion)
 
     dist_centroids_points = np.linalg.norm(centroids - xs.reshape(M, 1, dim), axis=2)
     index_closest_centroid = dist_centroids_points.argmin(axis=1)
+    # local_count = np.array([xs[index_closest_centroid == i].shape[0] for i in range(N)])
     probabilities = np.bincount(index_closest_centroid) / float(M)
+    distortion = np.mean(dist_centroids_points[np.arange(M), index_closest_centroid] ** 2) * 0.5
+    return centroids, probabilities, distortion
+
+
+def lloyd_method_optim_dim_1(N: int, M: int, nbr_iter: int):
+    np.random.seed(0)
+    xs = np.random.normal(0, 1, size=M)  # Draw M samples of gaussian vectors
+    centroids = np.random.normal(0, 1, size=N)  # Initialize the Voronoi Quantizer
+    centroids.sort(axis=0)
+
+    with trange(nbr_iter, desc='Lloyd method') as t:
+        for step in t:
+            # slow version
+            # dist_centroids_points = np.linalg.norm(centroids.reshape((N, 1)) - xs.reshape(M, 1, 1), axis=2)
+            # index_closest_centroid = dist_centroids_points.argmin(axis=1)
+
+            # quick version
+            vertices = 0.5 * (centroids[:-1] + centroids[1:])
+            index_closest_centroid = np.sum(xs[:, None] >= vertices[None, :], axis=1)
+
+            # Compute the new quantization levels as the mean of the samples assigned to each level
+            centroids = np.array([np.mean(xs[index_closest_centroid == i], axis=0) for i in range(N)])
+
+    dist_centroids_points = np.linalg.norm(centroids.reshape((N, 1)) - xs.reshape(M, 1, 1), axis=2)
+    index_closest_centroid = dist_centroids_points.argmin(axis=1)
+    # local_count = np.array([xs[index_closest_centroid == i].shape[0] for i in range(N)])
+    probabilities = np.bincount(index_closest_centroid) / float(M)
+    distortion = np.mean(dist_centroids_points[np.arange(M), index_closest_centroid] ** 2) * 0.5
     return centroids, probabilities, distortion
 
 

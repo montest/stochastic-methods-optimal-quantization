@@ -1,5 +1,5 @@
 from clvq import clvq_method
-from lloyd import lloyd_method, lloyd_method_optim, lloyd_method_optim_bis
+from lloyd import lloyd_method, lloyd_method_optim, lloyd_method_optim_bis, lloyd_method_optim_dim_1
 
 if __name__ == "__main__":
     # Size of the optimal we want to build
@@ -11,7 +11,13 @@ if __name__ == "__main__":
     Ms = [5000]
     # Ms = [5000, 10000, 20000]
     for M in Ms:
-        centroids, probas, distortion = lloyd_method_optim_bis(N=50, M=100000, nbr_iter=nbr_iter, dim=1)
+        # centroids, probas, distortion = lloyd_method_optim_bis(N=50, M=100000, nbr_iter=nbr_iter, dim=1)
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(distortion)
+        # print("toto")
+        centroids, probas, distortion = lloyd_method_optim_dim_1(N=50, M=100000, nbr_iter=nbr_iter)
         print()
         print(centroids)
         print(probas)

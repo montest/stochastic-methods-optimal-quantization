@@ -37,6 +37,9 @@ def lloyd_method_dim_1(N: int, M: int, nbr_iter: int, seed: int = 0):
             # Compute the new quantization levels as the mean of the samples assigned to each level
             centroids = np.array([np.mean(xs[index_closest_centroid == i], axis=0) for i in range(N)])
 
+            if any(np.isnan(centroids)):
+                break
+
     # Compute, for each sample, the distance to each centroid
     dist_centroids_points = np.linalg.norm(centroids.reshape((N, 1)) - xs.reshape(M, 1, 1), axis=2)
     # Find the index of the centroid that is closest to each sample using the previously computed distances

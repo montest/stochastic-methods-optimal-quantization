@@ -1,3 +1,4 @@
+import math
 import os
 import time
 import itertools
@@ -29,7 +30,9 @@ def testing_method(fct_to_test, parameters_grid: dict, path_to_results: str):
             continue
 
         start_time = time.time()
-        fct_to_test(**permutations)
+        centroids, probabilities, distortion = fct_to_test(**permutations)
+        if math.isnan(distortion):
+            continue
         elapsed_time = time.time() - start_time
         dict_result["elapsed_time"] = elapsed_time
         df_results = pd.concat(

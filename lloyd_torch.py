@@ -121,6 +121,9 @@ def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed:
                 # Compute the new quantization levels as the mean of the samples assigned to each level
                 centroids = torch.tensor([torch.mean(xs[index_closest_centroid == i]) for i in range(N)]).to(device)
 
+                if torch.isnan(centroids).any():
+                    break
+
         # Compute, for each sample, the distance to each centroid
         dist_centroids_points = torch.norm(centroids - xs.reshape(M, 1, 1), dim=1)
         # Find the index of the centroid that is closest to each sample using the previously computed distances

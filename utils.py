@@ -14,21 +14,20 @@ from bokeh.plotting import figure
 Point = np.ndarray
 
 
-def find_closest_centroid(centroids: List[Point], p: Point):
-    index_closest_centroid = -1
-    min_dist = sys.float_info.max
-    for i, x_i in enumerate(centroids):
-        dist = np.linalg.norm(x_i - p)
-        if dist < min_dist:
-            index_closest_centroid = i
-            min_dist = dist
-    return index_closest_centroid, min_dist
-
-
-def find_closest_centroid_optim(centroids: List[Point], p: Point):
-    dist_centroids_point = np.linalg.norm(centroids - p, axis=1)
-    index_closest_centroid = dist_centroids_point.argmin()
-    return index_closest_centroid, dist_centroids_point[index_closest_centroid]
+def find_closest_centroid(centroids: List[Point], p: Point, use_optimized_version: bool):
+    if use_optimized_version:
+        dist_centroids_point = np.linalg.norm(centroids - p, axis=1)
+        index_closest_centroid = dist_centroids_point.argmin()
+        return index_closest_centroid, dist_centroids_point[index_closest_centroid]
+    else:
+        index_closest_centroid = -1
+        min_dist = sys.float_info.max
+        for i, x_i in enumerate(centroids):
+            dist = np.linalg.norm(x_i - p)
+            if dist < min_dist:
+                index_closest_centroid = i
+                min_dist = dist
+        return index_closest_centroid, min_dist
 
 
 def make_plot_distortion(directory: str, method: str):

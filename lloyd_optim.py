@@ -26,7 +26,7 @@ def lloyd_method_dim_1(N: int, M: int, nbr_iter: int, seed: int = 0):
     centroids = np.random.normal(0, 1, size=N)
     centroids.sort(axis=0)
 
-    with trange(nbr_iter, desc='Lloyd method (numpy)') as t:
+    with trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (numpy)') as t:
         for step in t:
             # Compute the vertices that separate the centroids
             vertices = 0.5 * (centroids[:-1] + centroids[1:])

@@ -110,7 +110,7 @@ def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed:
         centroids, index = centroids.sort()
         centroids = centroids.to(device)  # send centroids to correct device
 
-        with trange(nbr_iter, desc=f'Lloyd method (pytorch: {device})') as t:
+        with trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as t:
             for step in t:
                 # Compute the vertices that separate the centroids
                 vertices = 0.5 * (centroids[:-1] + centroids[1:])

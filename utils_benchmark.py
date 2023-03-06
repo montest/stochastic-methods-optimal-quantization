@@ -32,6 +32,8 @@ def testing_method(fct_to_test, parameters_grid: dict, path_to_results: str):
         start_time = time.time()
         centroids, probabilities, distortion = fct_to_test(**permutations)
         if math.isnan(distortion):
+            print(f"Results for following values {dict_result} were not saved "
+                  f"because an nan was present in the centroids")
             continue
         elapsed_time = time.time() - start_time
         dict_result["elapsed_time"] = elapsed_time

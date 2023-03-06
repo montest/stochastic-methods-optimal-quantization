@@ -125,6 +125,7 @@ def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed:
                     break
 
         # Compute, for each sample, the distance to each centroid
+        # todo: should fix memory ussie here
         dist_centroids_points = torch.norm(centroids - xs.reshape(M, 1, 1), dim=1)
         # Find the index of the centroid that is closest to each sample using the previously computed distances
         index_closest_centroid = dist_centroids_points.argmin(dim=1)

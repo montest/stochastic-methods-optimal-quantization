@@ -41,6 +41,7 @@ def lloyd_method_dim_1(N: int, M: int, nbr_iter: int, seed: int = 0):
                 break
 
     # Compute, for each sample, the distance to each centroid
+    # todo: should fix memory ussie here
     dist_centroids_points = np.linalg.norm(centroids.reshape((N, 1)) - xs.reshape(M, 1, 1), axis=2)
     # Find the index of the centroid that is closest to each sample using the previously computed distances
     index_closest_centroid = dist_centroids_points.argmin(axis=1)

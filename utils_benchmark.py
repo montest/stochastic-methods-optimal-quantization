@@ -2,7 +2,7 @@ import math
 import os
 import time
 import itertools
-
+import torch
 import pandas as pd
 
 
@@ -28,6 +28,7 @@ def testing_method(fct_to_test, parameters_grid: dict, path_to_results: str):
         if len(df_results) > 0 and check_existance(dict_result, df_results):
             print(f"Skipping {dict_result}")
             continue
+        torch.cuda.empty_cache()
 
         start_time = time.time()
         centroids, probabilities, distortion = fct_to_test(**permutations)

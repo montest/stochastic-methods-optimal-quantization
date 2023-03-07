@@ -1,6 +1,7 @@
 from clvq import clvq_method
 from lloyd import lloyd_method
 from lloyd_optim import lloyd_method_optim, lloyd_method_dim_1
+from lloyd_torch import lloyd_method_dim_1_pytorch
 from utils_benchmark import testing_method
 
 if __name__ == "__main__":
@@ -11,30 +12,35 @@ if __name__ == "__main__":
     nbr_iter = 100
 
     Ms = [10000]
-    # Ms = [5000, 10000, 20000]
-    parameters_grid = {
-        "N": [10, 20, 50, 100, 200, 500],
-        "M": [5000, 10000, 20000, 100000],
-        "nbr_iter": [10, 100, 500, 1000],
-        "seed": [0, 1, 2, 3, 4]
-    }
-    path_to_results = "results.csv"
-
-    testing_method(lloyd_method_dim_1, parameters_grid, path_to_results)
+    # # Ms = [5000, 10000, 20000]
+    # parameters_grid = {
+    #     "N": [10, 20, 50, 100, 200, 500],
+    #     "M": [5000, 10000, 20000, 100000],
+    #     "nbr_iter": [10, 100, 500, 1000],
+    #     "seed": [0, 1, 2, 3, 4]
+    # }
+    # path_to_results = "results.csv"
     #
-    # for M in Ms:
-    #     print("Testing dim 1")
-    #     centroids, probas, distortion = lloyd_method_optim(N=N, M=M, nbr_iter=nbr_iter, dim=1)
-    #     print()
-    #     print(centroids)
-    #     print(probas)
-    #     print(distortion)
-    #     centroids, probas, distortion = lloyd_method_dim_1(N=N, M=M, nbr_iter=nbr_iter)
-    #     print()
-    #     print(centroids)
-    #     print(probas)
-    #     print(distortion)
-    #     print("Testing dim 2")
+    # testing_method(lloyd_method_dim_1, parameters_grid, path_to_results)
+    #
+    for M in Ms:
+        print("Testing dim 1")
+        centroids, probas, distortion = lloyd_method_optim(N=N, M=M, nbr_iter=nbr_iter, dim=1)
+        print()
+        print(centroids)
+        print(probas)
+        print(distortion)
+        centroids, probas, distortion = lloyd_method_dim_1(N=N, M=M, nbr_iter=nbr_iter)
+        print()
+        print(centroids)
+        print(probas)
+        print(distortion)
+        centroids, probas, distortion = lloyd_method_dim_1_pytorch(N=N, M=M, nbr_iter=nbr_iter, device='cpu')
+        print()
+        print(centroids)
+        print(probas)
+        print(distortion)
+        # print("Testing dim 2")
     #     centroids, probas, distortion = lloyd_method_optim(N=N, M=M, nbr_iter=nbr_iter, dim=2)
     #     print()
     #     print(centroids)

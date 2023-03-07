@@ -124,13 +124,11 @@ def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed:
                 if torch.isnan(centroids).any():
                     break
 
-        # Compute, for each sample, the distance to each centroid
-        # todo: should fix memory ussie here
-        dist_centroids_points = torch.norm(centroids - xs.reshape(M, 1, 1), dim=1)
-        # Find the index of the centroid that is closest to each sample using the previously computed distances
-        index_closest_centroid = dist_centroids_points.argmin(dim=1)
+        # Find the index of the centroid that is closest to each sample
+        vertices = 0.5 * (centroids[:-1] + centroids[1:])
+        index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
         # Compute the probability of each centroid
         probabilities = torch.bincount(index_closest_centroid).to('cpu').numpy()/float(M)
         # Compute the final distortion between the samples and the quantizer
-        distortion = torch.mean(dist_centroids_points[torch.arange(M), index_closest_centroid] ** 2).item() * 0.5
+        distortion = torch.sum(torch.pow(xs - centroids[index_closest_centroid], 2)).item() / float(2 * M)
         return centroids.to('cpu').numpy(), probabilities, distortion

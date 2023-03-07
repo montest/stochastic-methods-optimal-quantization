@@ -40,15 +40,13 @@ def lloyd_method_dim_1(N: int, M: int, nbr_iter: int, seed: int = 0):
             if any(np.isnan(centroids)):
                 break
 
-    # Compute, for each sample, the distance to each centroid
-    # todo: should fix memory ussie here
-    dist_centroids_points = np.linalg.norm(centroids.reshape((N, 1)) - xs.reshape(M, 1, 1), axis=2)
-    # Find the index of the centroid that is closest to each sample using the previously computed distances
-    index_closest_centroid = dist_centroids_points.argmin(axis=1)
+    # Find the index of the centroid that is closest to each sample
+    vertices = 0.5 * (centroids[:-1] + centroids[1:])
+    index_closest_centroid = np.sum(xs[:, None] >= vertices[None, :], axis=1)
     # Compute the probability of each centroid
     probabilities = np.bincount(index_closest_centroid) / float(M)
     # Compute the final distortion between the samples and the quantizer
-    distortion = np.mean(dist_centroids_points[np.arange(M), index_closest_centroid] ** 2) * 0.5
+    distortion = ((xs - centroids[index_closest_centroid]) ** 2).sum() / float(2 * M)
     return centroids, probabilities, distortion
 
 

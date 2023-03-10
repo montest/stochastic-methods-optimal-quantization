@@ -26,19 +26,18 @@ def lloyd_method_dim_1(N: int, M: int, nbr_iter: int, seed: int = 0):
     centroids = np.random.normal(0, 1, size=N)
     centroids.sort(axis=0)
 
-    with trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (numpy)') as t:
-        for step in t:
-            # Compute the vertices that separate the centroids
-            vertices = 0.5 * (centroids[:-1] + centroids[1:])
+    for step in trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (numpy)'):
+        # Compute the vertices that separate the centroids
+        vertices = 0.5 * (centroids[:-1] + centroids[1:])
 
-            # Find the index of the centroid that is closest to each sample
-            index_closest_centroid = np.sum(xs[:, None] >= vertices[None, :], axis=1)
+        # Find the index of the centroid that is closest to each sample
+        index_closest_centroid = np.sum(xs[:, None] >= vertices[None, :], axis=1)
 
-            # Compute the new quantization levels as the mean of the samples assigned to each level
-            centroids = np.array([np.mean(xs[index_closest_centroid == i], axis=0) for i in range(N)])
+        # Compute the new quantization levels as the mean of the samples assigned to each level
+        centroids = np.array([np.mean(xs[index_closest_centroid == i], axis=0) for i in range(N)])
 
-            if any(np.isnan(centroids)):
-                break
+        if any(np.isnan(centroids)):
+            break
 
     # Find the index of the centroid that is closest to each sample
     vertices = 0.5 * (centroids[:-1] + centroids[1:])

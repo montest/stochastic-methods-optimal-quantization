@@ -1,11 +1,11 @@
 import sys
+import torch.nn.functional as F
+
+# import numpy as np
+# np.set_printoptions(threshold=np.inf, linewidth=10_000)
 
 import torch
-import torch.nn.functional as F
-import numpy as np
 from tqdm import trange
-
-np.set_printoptions(threshold=np.inf, linewidth=10_000)
 torch.set_printoptions(profile="full", linewidth=10_000)
 
 
@@ -110,19 +110,18 @@ def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed:
         centroids, index = centroids.sort()
         centroids = centroids.to(device)  # send centroids to correct device
 
-        with trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as t:
-            for step in t:
-                # Compute the vertices that separate the centroids
-                vertices = 0.5 * (centroids[:-1] + centroids[1:])
+        for step in trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})'):
+            # Compute the vertices that separate the centroids
+            vertices = 0.5 * (centroids[:-1] + centroids[1:])
 
-                # Find the index of the centroid that is closest to each sample
-                index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
+            # Find the index of the centroid that is closest to each sample
+            index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
 
-                # Compute the new quantization levels as the mean of the samples assigned to each level
-                centroids = torch.tensor([torch.mean(xs[index_closest_centroid == i]) for i in range(N)]).to(device)
+            # Compute the new quantization levels as the mean of the samples assigned to each level
+            centroids = torch.tensor([torch.mean(xs[index_closest_centroid == i]) for i in range(N)]).to(device)
 
-                if torch.isnan(centroids).any():
-                    break
+            if torch.isnan(centroids).any():
+                break
 
         # Find the index of the centroid that is closest to each sample
         vertices = 0.5 * (centroids[:-1] + centroids[1:])

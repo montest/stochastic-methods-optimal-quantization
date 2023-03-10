@@ -1,8 +1,5 @@
-from clvq import clvq_method
-from lloyd import lloyd_method
 from lloyd_optim import lloyd_method_optim, lloyd_method_dim_1
 from lloyd_torch import lloyd_method_dim_1_pytorch
-from utils_benchmark import testing_method
 
 if __name__ == "__main__":
     # Size of the optimal we want to build

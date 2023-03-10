@@ -1,6 +1,6 @@
 from lloyd_optim import lloyd_method_dim_1
 from lloyd_torch import lloyd_method_dim_1_pytorch
-from utils_benchmark import testing_method
+from benchmark.utils import testing_method
 
 
 path_to_results = "results.csv"

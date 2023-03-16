@@ -93,6 +93,7 @@ def plot_results(df_grouped, M, directory_path):
 
     plot.circle(x='Ns_pytorch_cuda', y='pytorch_cuda', source=source, fill_color=color_pytorch_cuda, line_color=color_pytorch_cuda, legend_label='pytorch (cuda: T4)')
     plot.line(x='Ns_pytorch_cuda', y='pytorch_cuda', source=source, line_color=color_pytorch_cuda, legend_label='pytorch (cuda: T4)')
+    plot.legend.location = "top_left"
     plot.legend.label_text_font_size = general_font_size
     plot.xaxis.major_label_text_font_size = general_font_size
     plot.yaxis.major_label_text_font_size = general_font_size

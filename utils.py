@@ -7,11 +7,26 @@ import numpy as np
 
 from typing import List
 from pathlib import Path
+
+import torch
 from bokeh.io import export_svg, export_png
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 
 Point = np.ndarray
+
+
+def get_probabilities_and_distortion(centroids, xs):
+    centroids_ = centroids.clone().detach() if torch.is_tensor(centroids) else torch.tensor(centroids)
+    xs_ = xs.clone().detach() if torch.is_tensor(xs) else torch.tensor(xs)
+    M = len(xs_)
+    vertices = 0.5 * (centroids_[:-1] + centroids_[1:])
+    index_closest_centroid = torch.sum(xs_[:, None] >= vertices[None, :], dim=1).long()
+    # Compute the probability of each centroid
+    probabilities = torch.bincount(index_closest_centroid).to('cpu').numpy() / float(M)
+    # Compute the final distortion between the samples and the quantizer
+    distortion = torch.sum(torch.pow(xs_ - centroids_[index_closest_centroid], 2)).item() / float(2 * M)
+    return probabilities, distortion
 
 
 def find_closest_centroid(centroids: List[Point], p: Point, use_optimized_version: bool):

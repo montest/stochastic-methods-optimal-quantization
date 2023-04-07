@@ -76,6 +76,52 @@ def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed
     return centroids.to('cpu').numpy(), probabilities, distortion
 
 
+
+def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: str, batch_size: int, seed: int = 0):
+    """
+    Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
+     quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
+
+    N: number of centroids
+    M: number of samples to generate
+    num_epochs: number of epochs of fixed point search
+    batch_size: batch size used for the approximation of \E ( gradient )
+    seed: numpy seed for reproducibility
+
+    Returns: centroids, probabilities associated to each centroid and distortion
+    """
+    torch.manual_seed(seed=seed)  # Set seed in order to be able to reproduce the results
+    with torch.no_grad():
+
+        # Draw M samples of gaussian variable
+        xs = torch.randn(M)
+        xs = xs.to(device)  # send samples to correct device
+
+        # Initialize the Voronoi Quantizer randomly and sort it
+        centroids = torch.randn(N)
+        centroids, index = centroids.sort()
+        centroids = centroids.to(device)  # send centroids to correct device
+
+        with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch: {device})') as epochs:
+            for epoch in epochs:
+                steps = M // batch_size
+                rest = M % batch_size
+                for step in range(steps):
+                    # Compute the vertices that separate the centroids
+                    vertices = 0.5 * (centroids[:-1] + centroids[1:])
+
+                    batch_indices = [step*batch_size + i for i in range(batch_size)]
+                    # Find the index of the centroid that is closest to each sample in the batch
+                    index_closest_centroid = torch.sum(xs[batch_indices, None] >= vertices[None, :], axis=1)
+
+                    # Update the closest centroid using the local gradient
+                    gamma_n = lr(N, epoch*M + step)
+                    centroids[index_closest_centroid] = centroids[index_closest_centroid] - gamma_n * (centroids[index_closest_centroid] - xs[batch_indices]) / batch_size
+
+        probabilities, distortion = get_probabilities_and_distortion(centroids, xs)
+        return centroids.to('cpu').numpy(), probabilities, distortion
+
+
 class Quantizer(Module):
     def __init__(self, N, device):
         super(Quantizer, self).__init__()
@@ -172,9 +218,7 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
     quantizer.train()
     quantizer.zero_grad()
     optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0)
-    # optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0.9)
-    # local_centroids = quantizer.centroids.clone().detach()
-    with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch autograd: {device})') as epochs:
+    with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch autograd: {device})') as epochs:
         for epoch in epochs:
             steps = M // batch_size
             rest = M % batch_size
@@ -190,23 +234,14 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
                 # if step > 0:
                 #     print(f"1bis: {quantizer.centroids.grad.data}")
                 optim.zero_grad()
-                # loss = 0.5 * (quantizer.centroids[index_closest_centroid] - xs[batch_indices])**2
-                loss = 0.5 * torch.linalg.vector_norm(quantizer.centroids[index_closest_centroid] - xs[step])**2
-                # with torch.no_grad():
-                #     print(f"2:    {quantizer.centroids.grad.data}")
-                #     print(f"3:    {local_centroids[index_closest_centroid] - xs[step]}")
-                #
+                loss = 0.5 * torch.mean((quantizer.centroids[index_closest_centroid] - xs[batch_indices])**2)
+                # loss = 0.5 * torch.linalg.vector_norm(torch.reshape(quantizer.centroids[index_closest_centroid] - xs[step], (batch_size,1)), dim=1)**2 / batch_size
                 loss.backward()
-                optim.step()  # gradient descent
-                #
-                # print(f"4:    {quantizer.centroids.data}")
-                # # Update the closest centroid using the local gradient
-                # gamma_n = 0.01
-                # # gamma_n = lr(N, epoch*M + step)
-                # # local_centroids = quantizer.centroids.detach().copy()
                 # with torch.no_grad():
-                #     local_centroids[index_closest_centroid] = local_centroids[index_closest_centroid] - gamma_n * (local_centroids[index_closest_centroid] - xs[step])
-                # print(f"5:    {local_centroids}")
+                #     print(f"2:    {torch.sum(quantizer.centroids.grad.data)}")
+                #     print(f"3:    {torch.sum(quantizer.centroids[index_closest_centroid] - xs[batch_indices])/batch_size}")
+
+                optim.step()  # gradient descent
     quantizer.eval()
     probabilities, distortion = get_probabilities_and_distortion(quantizer.centroids, xs)
     return quantizer.centroids.clone().detach().to('cpu').numpy(), probabilities, distortion

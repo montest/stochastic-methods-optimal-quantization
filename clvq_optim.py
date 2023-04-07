@@ -1,7 +1,6 @@
 import numpy as np
 
 from tqdm import trange
-
 from utils import get_probabilities_and_distortion
 
 np.set_printoptions(threshold=np.inf, linewidth=10_000)
@@ -45,10 +44,6 @@ def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
                 # Find the index of the centroid that is closest to each sample
                 index_closest_centroid = np.sum(xs[step, None] >= vertices[None, :])
                 # l2_dist = np.linalg.norm(centroids[index_closest_centroid] - xs[step])
-
-                # dist_centroids_point = np.linalg.norm((centroids - xs[step]).reshape(N, 1), axis=1)
-                # index_closest_centroid_bis = dist_centroids_point.argmin()
-                # l2_dist_bis = dist_centroids_point[index_closest_centroid]
 
                 gamma_n = lr(N, epoch*M + step)
 

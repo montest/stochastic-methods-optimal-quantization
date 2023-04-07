@@ -5,7 +5,7 @@ import imageio
 
 import numpy as np
 
-from typing import List
+from typing import List, Union
 from pathlib import Path
 
 import torch
@@ -16,7 +16,14 @@ from bokeh.plotting import figure
 Point = np.ndarray
 
 
-def get_probabilities_and_distortion(centroids, xs):
+def get_probabilities_and_distortion(centroids: Union[np.ndarray, torch.tensor], xs: Union[np.ndarray, torch.tensor]):
+    """
+    Compute the probabilities and the distortion associated to `centroids` using the samples `xs`
+    centroids: centroids of size `N`
+    xs: `M` samples to use in order to compute the probabilities and the distortion
+
+    Returns: probabilities associated to each centroid and distortion
+    """
     centroids_ = centroids.clone().detach() if torch.is_tensor(centroids) else torch.tensor(centroids)
     xs_ = xs.clone().detach() if torch.is_tensor(xs) else torch.tensor(xs)
     M = len(xs_)

@@ -1,8 +1,10 @@
+import time
+
 import torch
 
 from clvq_optim import clvq_method_dim_1
 from clvq_pytorch import clvq_method_dim_1_pytorch, clvq_method_dim_1_pytorch_autograd, \
-    clvq_method_dim_1_pytorch_autograd_batched
+    clvq_method_dim_1_pytorch_autograd_batched, clvq_method_dim_1_pytorch_batched
 from lloyd import lloyd_method
 from lloyd_optim import lloyd_method_optim, lloyd_method_dim_1
 from lloyd_torch import lloyd_method_dim_1_pytorch
@@ -13,12 +15,21 @@ if __name__ == "__main__":
     N = 10
 
     # Number of iterations
-    nbr_iter = 1
+    nbr_iter = 10
 
     Ms = [100000]
 
     for M in Ms:
         print("Testing dim 1")
+        centroids, probas, distortion = clvq_method_dim_1_pytorch_batched(
+            N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
+        )
+        print()
+        print(centroids)
+        print(probas)
+        print(probas.sum())
+        print(distortion)
+        time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd_batched(
             N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
         )
@@ -27,30 +38,43 @@ if __name__ == "__main__":
         print(probas)
         print(probas.sum())
         print(distortion)
-        centroids, probas, distortion = clvq_method_dim_1(N=N, M=M, num_epochs=nbr_iter)
+        time.sleep(1)
+        centroids, probas, distortion = clvq_method_dim_1(
+            N=N, M=M, num_epochs=nbr_iter
+        )
         print()
         print(centroids)
         print(probas)
         print(np.sum(probas))
         print(distortion)
-        centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd(N=N, M=M, num_epochs=nbr_iter, device='cpu')
+        time.sleep(1)
+        centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd(
+            N=N, M=M, num_epochs=nbr_iter, device='cpu'
+        )
         print()
         print(centroids)
         print(probas)
         print(probas.sum())
         print(distortion)
-        centroids, probas, distortion = clvq_method_dim_1_pytorch(N=N, M=M, num_epochs=nbr_iter, device='cpu')
+        time.sleep(1)
+        centroids, probas, distortion = clvq_method_dim_1_pytorch(
+            N=N, M=M, num_epochs=nbr_iter, device='cpu'
+        )
         print()
         print(centroids)
         print(probas)
         print(probas.sum())
         print(distortion)
-        centroids, probas, distortion = lloyd_method_dim_1(N=N, M=M, nbr_iter=nbr_iter)
+        time.sleep(1)
+        centroids, probas, distortion = lloyd_method_dim_1(
+            N=N, M=M, nbr_iter=nbr_iter
+        )
         print()
         print(centroids)
         print(probas)
         print(np.sum(probas))
         print(distortion)
+        time.sleep(1)
         centroids, probas, distortion = lloyd_method_dim_1_pytorch(N=N, M=M, nbr_iter=nbr_iter, device='cpu')
         print()
         print(centroids)

@@ -1,13 +1,59 @@
-import sys
-import torch.nn.functional as F
-
-# import numpy as np
-# np.set_printoptions(threshold=np.inf, linewidth=10_000)
-
 import torch
 from tqdm import trange
 torch.set_printoptions(profile="full", linewidth=10_000)
 
+
+def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed: int = 0):
+    """
+    Apply `nbr_iter` iterations of the Randomized Lloyd algorithm in order to build an optimal quantizer of size `N`
+    for a Gaussian random variable. This implementation is done using torch.
+
+    N: number of centroids
+    M: number of samples to generate
+    nbr_iter: number of iterations of fixed point search
+    device: device on which perform the computations: "cuda" or "cpu"
+    seed: torch seed for reproducibility
+
+    Returns: centroids, probabilities associated to each centroid and distortion
+    """
+    torch.manual_seed(seed=seed)  # Set seed in order to be able to reproduce the results
+
+    with torch.no_grad():
+        # Draw M samples of gaussian variable
+        xs = torch.randn(M)
+        # xs = torch.tensor(torch.randn(M), dtype=torch.float32)
+        xs = xs.to(device)  # send samples to correct device
+
+        # Initialize the Voronoi Quantizer randomly
+        centroids = torch.randn(N)
+        centroids, index = centroids.sort()
+        centroids = centroids.to(device)  # send centroids to correct device
+
+        for step in trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})'):
+            # Compute the vertices that separate the centroids
+            vertices = 0.5 * (centroids[:-1] + centroids[1:])
+
+            # Find the index of the centroid that is closest to each sample
+            index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
+
+            # Compute the new quantization levels as the mean of the samples assigned to each level
+            centroids = torch.tensor([torch.mean(xs[index_closest_centroid == i]) for i in range(N)]).to(device)
+
+            if torch.isnan(centroids).any():
+                break
+
+        # Find the index of the centroid that is closest to each sample
+        vertices = 0.5 * (centroids[:-1] + centroids[1:])
+        index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
+        # Compute the probability of each centroid
+        probabilities = torch.bincount(index_closest_centroid).to('cpu').numpy()/float(M)
+        # Compute the final distortion between the samples and the quantizer
+        distortion = torch.sum(torch.pow(xs - centroids[index_closest_centroid], 2)).item() / float(2 * M)
+        return centroids.to('cpu').numpy(), probabilities, distortion
+
+########################################################################
+########## Old code and other methods to compute the vertices ##########
+########################################################################
 
 # def lloyd_method_pytorch(N: int, M: int, nbr_iter: int, device: str, closest_centroid_method: int=1, seed: int = 0):
 #     """
@@ -82,52 +128,3 @@ torch.set_printoptions(profile="full", linewidth=10_000)
 #         probabilities = torch.bincount(indices).to('cpu').numpy()/float(M)
 #
 #         return centroids.to('cpu').numpy(), probabilities
-
-
-def lloyd_method_dim_1_pytorch(N: int, M: int, nbr_iter: int, device: str, seed: int = 0):
-    """
-    Apply `nbr_iter` iterations of the Randomized Lloyd algorithm in order to build an optimal quantizer of size `N`
-    for a Gaussian random variable. This implementation is done using torch.
-
-    N: number of centroids
-    M: number of samples to generate
-    nbr_iter: number of iterations of fixed point search
-    device: device on which perform the computations: "cuda" or "cpu"
-    seed: torch seed for reproducibility
-
-    Returns: centroids, probabilities associated to each centroid and distortion
-    """
-    torch.manual_seed(seed=seed)  # Set seed in order to be able to reproduce the results
-
-    with torch.no_grad():
-        # Draw M samples of gaussian variable
-        xs = torch.randn(M)
-        # xs = torch.tensor(torch.randn(M), dtype=torch.float32)
-        xs = xs.to(device)  # send samples to correct device
-
-        # Initialize the Voronoi Quantizer randomly
-        centroids = torch.randn(N)
-        centroids, index = centroids.sort()
-        centroids = centroids.to(device)  # send centroids to correct device
-
-        for step in trange(nbr_iter, desc=f'Lloyd method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})'):
-            # Compute the vertices that separate the centroids
-            vertices = 0.5 * (centroids[:-1] + centroids[1:])
-
-            # Find the index of the centroid that is closest to each sample
-            index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
-
-            # Compute the new quantization levels as the mean of the samples assigned to each level
-            centroids = torch.tensor([torch.mean(xs[index_closest_centroid == i]) for i in range(N)]).to(device)
-
-            if torch.isnan(centroids).any():
-                break
-
-        # Find the index of the centroid that is closest to each sample
-        vertices = 0.5 * (centroids[:-1] + centroids[1:])
-        index_closest_centroid = torch.sum(xs[:, None] >= vertices[None, :], dim=1).long()
-        # Compute the probability of each centroid
-        probabilities = torch.bincount(index_closest_centroid).to('cpu').numpy()/float(M)
-        # Compute the final distortion between the samples and the quantizer
-        distortion = torch.sum(torch.pow(xs - centroids[index_closest_centroid], 2)).item() / float(2 * M)
-        return centroids.to('cpu').numpy(), probabilities, distortion

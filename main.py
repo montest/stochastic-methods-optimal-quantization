@@ -15,39 +15,39 @@ if __name__ == "__main__":
     N = 10
 
     # Number of iterations
-    nbr_iter = 10
+    nbr_iter = 1
 
     Ms = [100000]
 
     for M in Ms:
         print("Testing dim 1")
-        centroids, probas, distortion = clvq_method_dim_1_pytorch_batched(
-            N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
-        )
-        print()
-        print(centroids)
-        print(probas)
-        print(probas.sum())
-        print(distortion)
-        time.sleep(1)
-        centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd_batched(
-            N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
-        )
-        print()
-        print(centroids)
-        print(probas)
-        print(probas.sum())
-        print(distortion)
-        time.sleep(1)
-        centroids, probas, distortion = clvq_method_dim_1(
-            N=N, M=M, num_epochs=nbr_iter
-        )
-        print()
-        print(centroids)
-        print(probas)
-        print(np.sum(probas))
-        print(distortion)
-        time.sleep(1)
+        # centroids, probas, distortion = clvq_method_dim_1_pytorch_batched(
+        #     N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
+        # )
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(probas.sum())
+        # print(distortion)
+        # time.sleep(1)
+        # centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd_batched(
+        #     N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
+        # )
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(probas.sum())
+        # print(distortion)
+        # time.sleep(1)
+        # centroids, probas, distortion = clvq_method_dim_1(
+        #     N=N, M=M, num_epochs=nbr_iter
+        # )
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(np.sum(probas))
+        # print(distortion)
+        # time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd(
             N=N, M=M, num_epochs=nbr_iter, device='cpu'
         )

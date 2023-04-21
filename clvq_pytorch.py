@@ -1,12 +1,5 @@
-import sys
-import torch.nn.functional as F
-
-# import numpy as np
-# np.set_printoptions(threshold=np.inf, linewidth=10_000)
-
 import torch
 from torch import nn
-from torch.nn import Module, Linear
 from tqdm import trange
 
 from utils import get_probabilities_and_distortion
@@ -28,15 +21,13 @@ def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed
     N: number of centroids
     M: number of samples to generate
     num_epochs: number of epochs of fixed point search
+    device: device on which perform the computations: "cuda" or "cpu"
     seed: numpy seed for reproducibility
 
     Returns: centroids, probabilities associated to each centroid and distortion
     """
     torch.manual_seed(seed=seed)  # Set seed in order to be able to reproduce the results
     with torch.no_grad():
-        # probabilities = torch.zeros(N)
-        # distortion = 0.
-
         # Draw M samples of gaussian variable
         xs = torch.randn(M)
         xs = xs.to(device)  # send samples to correct device
@@ -54,27 +45,15 @@ def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed
 
                     # Find the index of the centroid that is closest to each sample
                     index_closest_centroid = torch.sum(xs[step, None] >= vertices[None, :]).long()
-                    # l2_dist = torch.norm(centroids[index_closest_centroid] - xs[step])
 
-                    gamma_n = lr(N, epoch*M + step)
+                    gamma_n = 1e-2
+                    # gamma_n = lr(N, epoch*M + step)
 
                     # Update the closest centroid using the local gradient
                     centroids[index_closest_centroid] = centroids[index_closest_centroid] - gamma_n * (centroids[index_closest_centroid] - xs[step])
 
-                #     # Update the distortion using gamma_n
-                #     distortion = (1 - gamma_n) * distortion + 0.5 * gamma_n * l2_dist ** 2
-                #
-                #     # Update probabilities
-                #     probabilities = (1 - gamma_n) * probabilities
-                #     probabilities[index_closest_centroid] += gamma_n
-                #
-                #     if torch.isnan(centroids).any():
-                #         break
-                # epochs.set_postfix(distortion=distortion.item())
-
     probabilities, distortion = get_probabilities_and_distortion(centroids, xs)
     return centroids.to('cpu').numpy(), probabilities, distortion
-
 
 
 def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: str, batch_size: int, seed: int = 0):
@@ -85,6 +64,7 @@ def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: s
     N: number of centroids
     M: number of samples to generate
     num_epochs: number of epochs of fixed point search
+    device: device on which perform the computations: "cuda" or "cpu"
     batch_size: batch size used for the approximation of \E ( gradient )
     seed: numpy seed for reproducibility
 
@@ -122,7 +102,7 @@ def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: s
         return centroids.to('cpu').numpy(), probabilities, distortion
 
 
-class Quantizer(Module):
+class Quantizer(nn.Module):
     def __init__(self, N, device):
         super(Quantizer, self).__init__()
         centroids = torch.randn(N)
@@ -139,6 +119,7 @@ def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: 
     N: number of centroids
     M: number of samples to generate
     num_epochs: number of epochs of fixed point search
+    device: device on which perform the computations: "cuda" or "cpu"
     seed: numpy seed for reproducibility
 
     Returns: centroids, probabilities associated to each centroid and distortion
@@ -154,7 +135,8 @@ def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: 
     quantizer = Quantizer(N, device)
     quantizer.train()
     quantizer.zero_grad()
-    optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0)
+    optim = torch.optim.SGD(quantizer.parameters(), lr=1e-2, momentum=0)
+    # optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0)
     # optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0.9)
     # local_centroids = quantizer.centroids.clone().detach()
     with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch autograd: {device})') as epochs:
@@ -201,6 +183,7 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
     N: number of centroids
     M: number of samples to generate
     num_epochs: number of epochs of fixed point search
+    device: device on which perform the computations: "cuda" or "cpu"
     batch_size: batch size used for the approximation of \E ( gradient )
     seed: numpy seed for reproducibility
 
@@ -245,3 +228,66 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
     quantizer.eval()
     probabilities, distortion = get_probabilities_and_distortion(quantizer.centroids, xs)
     return quantizer.centroids.clone().detach().to('cpu').numpy(), probabilities, distortion
+
+
+
+
+########################################################################
+####### Old code where probas and distortion are computed inline #######
+########################################################################
+
+# def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed: int = 0):
+#     """
+#     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
+#      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
+#
+#     N: number of centroids
+#     M: number of samples to generate
+#     num_epochs: number of epochs of fixed point search
+#     device: device on which perform the computations: "cuda" or "cpu"
+#     seed: numpy seed for reproducibility
+#
+#     Returns: centroids, probabilities associated to each centroid and distortion
+#     """
+#     torch.manual_seed(seed=seed)  # Set seed in order to be able to reproduce the results
+#     with torch.no_grad():
+#         probabilities = torch.zeros(N)
+#         distortion = 0.
+#
+#         # Draw M samples of gaussian variable
+#         xs = torch.randn(M)
+#         xs = xs.to(device)  # send samples to correct device
+#
+#         # Initialize the Voronoi Quantizer randomly and sort it
+#         centroids = torch.randn(N)
+#         centroids, index = centroids.sort()
+#         centroids = centroids.to(device)  # send centroids to correct device
+#
+#         with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as epochs:
+#             for epoch in epochs:
+#                 for step in range(M):
+#                     # Compute the vertices that separate the centroids
+#                     vertices = 0.5 * (centroids[:-1] + centroids[1:])
+#
+#                     # Find the index of the centroid that is closest to each sample
+#                     index_closest_centroid = torch.sum(xs[step, None] >= vertices[None, :]).long()
+#                     l2_dist = torch.norm(centroids[index_closest_centroid] - xs[step])
+#
+#                     gamma_n = lr(N, epoch*M + step)
+#
+#                     # Update the closest centroid using the local gradient
+#                     centroids[index_closest_centroid] = centroids[index_closest_centroid] - gamma_n * (centroids[index_closest_centroid] - xs[step])
+#
+#                     # Update the distortion using gamma_n
+#                     distortion = (1 - gamma_n) * distortion + 0.5 * gamma_n * l2_dist ** 2
+#
+#                     # Update probabilities
+#                     probabilities = (1 - gamma_n) * probabilities
+#                     probabilities[index_closest_centroid] += gamma_n
+#
+#                     if torch.isnan(centroids).any():
+#                         break
+#                 epochs.set_postfix(distortion=distortion.item())
+#
+#     # probabilities, distortion = get_probabilities_and_distortion(centroids, xs)
+#     return centroids.to('cpu').numpy(), probabilities, distortion

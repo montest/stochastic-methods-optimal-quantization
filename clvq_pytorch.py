@@ -143,8 +143,8 @@ def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: 
         for epoch in epochs:
             for step in range(M):
                 # print(f"Step {step+1}")
-                # Compute the vertices that separate the centroids
                 with torch.no_grad():
+                    # Compute the vertices that separate the centroids
                     vertices = 0.5 * (quantizer.centroids[:-1] + quantizer.centroids[1:])
                     # Find the index of the centroid that is closest to each sample
                     index_closest_centroid = torch.sum(xs[step, None] >= vertices[None, :]).long()
@@ -208,8 +208,8 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
             for step in range(steps):
                 batch_indices = [step*batch_size + i for i in range(batch_size)]
                 # print(f"Step {step+1}")
-                # Compute the vertices that separate the centroids
                 with torch.no_grad():
+                    # Compute the vertices that separate the centroids
                     vertices = 0.5 * (quantizer.centroids[:-1] + quantizer.centroids[1:])
                     # Find the index of the centroid that is closest to each sample
                     index_closest_centroid = torch.sum(xs[batch_indices, None] >= vertices[None, :], axis=1)

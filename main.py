@@ -7,7 +7,7 @@ from clvq_pytorch import clvq_method_dim_1_pytorch, clvq_method_dim_1_pytorch_au
     clvq_method_dim_1_pytorch_autograd_batched, clvq_method_dim_1_pytorch_batched
 from lloyd import lloyd_method
 from lloyd_optim import lloyd_method_optim, lloyd_method_dim_1
-from lloyd_torch import lloyd_method_dim_1_pytorch
+from lloyd_pytorch import lloyd_method_dim_1_pytorch
 import numpy as np
 
 if __name__ == "__main__":
@@ -39,15 +39,15 @@ if __name__ == "__main__":
         # print(probas.sum())
         # print(distortion)
         # time.sleep(1)
-        # centroids, probas, distortion = clvq_method_dim_1(
-        #     N=N, M=M, num_epochs=nbr_iter
-        # )
-        # print()
-        # print(centroids)
-        # print(probas)
-        # print(np.sum(probas))
-        # print(distortion)
-        # time.sleep(1)
+        centroids, probas, distortion = clvq_method_dim_1(
+            N=N, M=M, num_epochs=nbr_iter
+        )
+        print()
+        print(centroids)
+        print(probas)
+        print(np.sum(probas))
+        print(distortion)
+        time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd(
             N=N, M=M, num_epochs=nbr_iter, device='cpu'
         )
@@ -65,22 +65,22 @@ if __name__ == "__main__":
         print(probas)
         print(probas.sum())
         print(distortion)
-        time.sleep(1)
-        centroids, probas, distortion = lloyd_method_dim_1(
-            N=N, M=M, nbr_iter=nbr_iter
-        )
-        print()
-        print(centroids)
-        print(probas)
-        print(np.sum(probas))
-        print(distortion)
-        time.sleep(1)
-        centroids, probas, distortion = lloyd_method_dim_1_pytorch(N=N, M=M, nbr_iter=nbr_iter, device='cpu')
-        print()
-        print(centroids)
-        print(probas)
-        print(np.sum(probas))
-        print(distortion)
+        # time.sleep(1)
+        # centroids, probas, distortion = lloyd_method_dim_1(
+        #     N=N, M=M, nbr_iter=nbr_iter
+        # )
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(np.sum(probas))
+        # print(distortion)
+        # time.sleep(1)
+        # centroids, probas, distortion = lloyd_method_dim_1_pytorch(N=N, M=M, nbr_iter=nbr_iter, device='cpu')
+        # print()
+        # print(centroids)
+        # print(probas)
+        # print(np.sum(probas))
+        # print(distortion)
         # centroids, probas, distortion = lloyd_method_optim(N=N, M=M, nbr_iter=nbr_iter, dim=1)
         # print()
         # print(centroids)

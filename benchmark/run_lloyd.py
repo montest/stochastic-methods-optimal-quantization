@@ -1,10 +1,10 @@
 from lloyd_optim import lloyd_method_dim_1
-from lloyd_torch import lloyd_method_dim_1_pytorch
+from lloyd_pytorch import lloyd_method_dim_1_pytorch
 from benchmark.utils import testing_method
 
 
 # first warm-up in order to prepare the gpu and cpu
-path_to_results = "warm_up_results.csv"
+path_to_results = "warm_up_results_lloyd.csv"
 
 warm_up_basic_parameters_grid = {
     "M": [500000],
@@ -20,7 +20,7 @@ testing_method(lloyd_method_dim_1, warm_up_basic_parameters_grid, path_to_result
 
 
 # then the true benchmark starts
-path_to_results = "final_results.csv"
+path_to_results = "final_results_lloyd.csv"
 
 basic_parameters_grid = {
     "M": [200000, 500000, 1000000],

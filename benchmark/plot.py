@@ -5,7 +5,7 @@ from benchmark.utils import plot_results, plot_ratios
 
 if __name__ == "__main__":
     directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/"
-    path_to_results = os.path.join(directory_path, "final_results.csv")
+    path_to_results = os.path.join(directory_path, "final_results_lloyd.csv")
     if os.path.exists(path_to_results) and os.path.getsize(path_to_results) > 0:
         df_results = pd.read_csv(path_to_results, index_col=0)
     else:
@@ -23,7 +23,7 @@ if __name__ == "__main__":
 
     df_grouped = df_results.groupby(['N', 'M', 'method'])['elapsed_time_by_iter'].mean()
     df_grouped = df_grouped.reset_index()
-    df_grouped.to_csv(os.path.join(directory_path, "grouped_final_results.csv"))
+    df_grouped.to_csv(os.path.join(directory_path, "grouped_final_results_lloyd.csv"))
 
     plot_results(df_grouped=df_grouped, M=100000, directory_path=directory_path)
     plot_results(df_grouped=df_grouped, M=200000, directory_path=directory_path)

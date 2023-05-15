@@ -1,14 +1,9 @@
 import time
 
-import torch
+import numpy as np
 
 from clvq_optim import clvq_method_dim_1
-from clvq_pytorch import clvq_method_dim_1_pytorch, clvq_method_dim_1_pytorch_autograd, \
-    clvq_method_dim_1_pytorch_autograd_batched, clvq_method_dim_1_pytorch_batched
-from lloyd import lloyd_method
-from lloyd_optim import lloyd_method_optim, lloyd_method_dim_1
-from lloyd_pytorch import lloyd_method_dim_1_pytorch
-import numpy as np
+from clvq_pytorch import clvq_method_dim_1_pytorch, clvq_method_dim_1_pytorch_autograd
 
 if __name__ == "__main__":
     # Size of the optimal we want to build

@@ -1,8 +1,9 @@
-import numpy as np
-
-from tqdm import trange
 from typing import List
-from utils import find_closest_centroid, Point, make_gif, get_directory, save_results
+
+import numpy as np
+from tqdm import trange
+
+from utils import find_closest_centroid, Point
 
 
 def lr(N: int, n: int):

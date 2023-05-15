@@ -1,7 +1,8 @@
 import os
+
 import pandas as pd
 
-from benchmark.utils import plot_results, plot_ratios
+from benchmark.benchmark_utils import plot_results, plot_ratios
 
 if __name__ == "__main__":
     directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/"

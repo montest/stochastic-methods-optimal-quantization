@@ -1,6 +1,6 @@
 import numpy as np
-
 from tqdm import trange
+
 from utils import get_probabilities_and_distortion
 
 np.set_printoptions(threshold=np.inf, linewidth=10_000)

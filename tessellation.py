@@ -1,12 +1,13 @@
-import numpy as np
-
 from dataclasses import dataclass, field
 from typing import List, Union
-from scipy.spatial import Voronoi
+
+import numpy as np
+from bokeh.io import export_png, export_svg
 from bokeh.models import ColumnDataSource, LinearColorMapper, ColorBar, Range1d
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure, show
-from bokeh.io import export_png, export_svg
+from scipy.spatial import Voronoi
+
 from utils import Point
 
 

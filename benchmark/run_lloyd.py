@@ -1,7 +1,6 @@
+from benchmark.benchmark_utils import testing_method
 from lloyd_optim import lloyd_method_dim_1
 from lloyd_pytorch import lloyd_method_dim_1_pytorch
-from benchmark.utils import testing_method
-
 
 # first warm-up in order to prepare the gpu and cpu
 path_to_results = "warm_up_results_lloyd.csv"

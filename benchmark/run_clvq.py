@@ -1,8 +1,7 @@
+from benchmark.benchmark_utils import testing_method
 from clvq_optim import clvq_method_dim_1
 from clvq_pytorch import clvq_method_dim_1_pytorch
 from clvq_pytorch import clvq_method_dim_1_pytorch_autograd
-from benchmark.utils import testing_method
-
 
 # first warm-up in order to prepare the gpu and cpu
 path_to_results = "warm_up_results_clvq.csv"
@@ -16,9 +15,9 @@ warm_up_basic_parameters_grid = {
 warm_up_pytorch_parameters_grid = warm_up_basic_parameters_grid.copy()
 warm_up_pytorch_parameters_grid["device"] = ["cuda", "cpu"]
 
-testing_method(clvq_method_dim_1, warm_up_pytorch_parameters_grid, path_to_results)
-testing_method(clvq_method_dim_1_pytorch, warm_up_basic_parameters_grid, path_to_results)
-testing_method(clvq_method_dim_1_pytorch_autograd, warm_up_basic_parameters_grid, path_to_results)
+testing_method(clvq_method_dim_1_pytorch, warm_up_pytorch_parameters_grid, path_to_results)
+testing_method(clvq_method_dim_1_pytorch_autograd, warm_up_pytorch_parameters_grid, path_to_results)
+testing_method(clvq_method_dim_1, warm_up_basic_parameters_grid, path_to_results)
 
 
 # then the true benchmark starts

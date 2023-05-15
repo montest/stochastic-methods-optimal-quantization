@@ -1,17 +1,18 @@
+import itertools
 import math
 import os
 import time
-import itertools
-import torch
-import pandas as pd
-import numpy as np
 
+import chromedriver_autoinstaller
+import numpy as np
+import pandas as pd
+import torch
 from bokeh.io import export_svg, export_png
 from bokeh.models import ColumnDataSource
 from bokeh.palettes import Viridis
-from bokeh.plotting import figure, show
+from bokeh.plotting import figure
 from bokeh.transform import dodge
-import chromedriver_autoinstaller
+
 chromedriver_autoinstaller.install()
 
 

@@ -1,15 +1,13 @@
+import csv
 import os
 import sys
-import csv
-import imageio
-
-import numpy as np
-
-from typing import List, Union
 from pathlib import Path
+from typing import List, Union
 
+import imageio
+import numpy as np
 import torch
-from bokeh.io import export_svg, export_png
+from bokeh.io import export_svg
 from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 

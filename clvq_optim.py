@@ -12,14 +12,14 @@ def lr(N: int, n: int):
     return a / float(a + b * (n+1.))
 
 
-def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
+def clvq_method_dim_1(N: int, M: int, num_epoch: int, seed: int = 0):
     """
     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
      quantizer of size `N` for a Gaussian random variable. This implementation is done using numpy.
 
     N: number of centroids
     M: number of samples to generate
-    num_epochs: number of epochs of fixed point search
+    num_epoch: number of epochs of fixed point search
     seed: numpy seed for reproducibility
 
     Returns: centroids, probabilities associated to each centroid and distortion
@@ -33,7 +33,7 @@ def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
     centroids = np.random.normal(0, 1, size=N)
     centroids.sort(axis=0)
 
-    with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (numpy)') as epochs:
+    with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (numpy)') as epochs:
         for epoch in epochs:
             for step in range(M):
                 # Compute the vertices that separate the centroids
@@ -57,14 +57,14 @@ def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
 ####### Old code where probas and distortion are computed inline #######
 ########################################################################
 
-# def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
+# def clvq_method_dim_1(N: int, M: int, num_epoch: int, seed: int = 0):
 #     """
 #     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
 #      quantizer of size `N` for a Gaussian random variable. This implementation is done using numpy.
 #
 #     N: number of centroids
 #     M: number of samples to generate
-#     num_epochs: number of epochs of fixed point search
+#     num_epoch: number of epochs of fixed point search
 #     seed: numpy seed for reproducibility
 #
 #     Returns: centroids, probabilities associated to each centroid and distortion
@@ -80,7 +80,7 @@ def clvq_method_dim_1(N: int, M: int, num_epochs: int, seed: int = 0):
 #     centroids = np.random.normal(0, 1, size=N)
 #     centroids.sort(axis=0)
 #
-#     with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (numpy)') as epochs:
+#     with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (numpy)') as epochs:
 #         for epoch in epochs:
 #             for step in range(M):
 #                 # Compute the vertices that separate the centroids

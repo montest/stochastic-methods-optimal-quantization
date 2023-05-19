@@ -10,7 +10,7 @@ warm_up_basic_parameters_grid = {
     "M": [500000],
     "seed": [0],
     "N": [20],
-    "num_epochs": [1],
+    "num_epoch": [1],
 }
 warm_up_pytorch_parameters_grid = warm_up_basic_parameters_grid.copy()
 warm_up_pytorch_parameters_grid["device"] = ["cuda", "cpu"]
@@ -24,10 +24,10 @@ testing_method(clvq_method_dim_1, warm_up_basic_parameters_grid, path_to_results
 path_to_results = "final_results_clvq.csv"
 
 basic_parameters_grid = {
-    "M": [200000, 500000, 1000000],
+    "M": [100000, 200000, 500000, 1000000],
     "seed": [0, 1, 2],
     "N": [10, 20, 50, 100, 200, 500],
-    "num_epochs": [1],
+    "num_epoch": [2],
 }
 pytorch_parameters_grid = basic_parameters_grid.copy()
 pytorch_parameters_grid["device"] = ["cuda", "cpu"]

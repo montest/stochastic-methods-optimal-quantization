@@ -2,7 +2,7 @@ import os
 
 import pandas as pd
 
-from benchmark.benchmark_utils import plot_results, plot_ratios
+from benchmark.benchmark_utils import plot_results_lloyd, plot_ratios_lloyd
 
 if __name__ == "__main__":
     directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/"
@@ -26,12 +26,12 @@ if __name__ == "__main__":
     df_grouped = df_grouped.reset_index()
     df_grouped.to_csv(os.path.join(directory_path, "grouped_final_results_lloyd.csv"))
 
-    plot_results(df_grouped=df_grouped, M=100000, directory_path=directory_path)
-    plot_results(df_grouped=df_grouped, M=200000, directory_path=directory_path)
-    plot_results(df_grouped=df_grouped, M=500000, directory_path=directory_path)
-    plot_results(df_grouped=df_grouped, M=1000000, directory_path=directory_path)
+    plot_results_lloyd(df_grouped=df_grouped, M=100000, directory_path=directory_path)
+    plot_results_lloyd(df_grouped=df_grouped, M=200000, directory_path=directory_path)
+    plot_results_lloyd(df_grouped=df_grouped, M=500000, directory_path=directory_path)
+    plot_results_lloyd(df_grouped=df_grouped, M=1000000, directory_path=directory_path)
 
-    plot_ratios(df_grouped=df_grouped, M=100000, directory_path=directory_path)
-    plot_ratios(df_grouped=df_grouped, M=200000, directory_path=directory_path)
-    plot_ratios(df_grouped=df_grouped, M=500000, directory_path=directory_path)
-    plot_ratios(df_grouped=df_grouped, M=1000000, directory_path=directory_path)
+    plot_ratios_lloyd(df_grouped=df_grouped, M=100000, directory_path=directory_path)
+    plot_ratios_lloyd(df_grouped=df_grouped, M=200000, directory_path=directory_path)
+    plot_ratios_lloyd(df_grouped=df_grouped, M=500000, directory_path=directory_path)
+    plot_ratios_lloyd(df_grouped=df_grouped, M=1000000, directory_path=directory_path)

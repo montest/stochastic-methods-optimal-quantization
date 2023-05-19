@@ -17,7 +17,7 @@ if __name__ == "__main__":
     for M in Ms:
         print("Testing dim 1")
         # centroids, probas, distortion = clvq_method_dim_1_pytorch_batched(
-        #     N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
+        #     N=N, M=M, num_epoch=nbr_iter, device='cpu', batch_size=8
         # )
         # print()
         # print(centroids)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         # print(distortion)
         # time.sleep(1)
         # centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd_batched(
-        #     N=N, M=M, num_epochs=nbr_iter, device='cpu', batch_size=8
+        #     N=N, M=M, num_epoch=nbr_iter, device='cpu', batch_size=8
         # )
         # print()
         # print(centroids)
@@ -35,7 +35,7 @@ if __name__ == "__main__":
         # print(distortion)
         # time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1(
-            N=N, M=M, num_epochs=nbr_iter
+            N=N, M=M, num_epoch=nbr_iter
         )
         print()
         print(centroids)
@@ -44,7 +44,7 @@ if __name__ == "__main__":
         print(distortion)
         time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1_pytorch_autograd(
-            N=N, M=M, num_epochs=nbr_iter, device='cpu'
+            N=N, M=M, num_epoch=nbr_iter, device='cpu'
         )
         print()
         print(centroids)
@@ -53,7 +53,7 @@ if __name__ == "__main__":
         print(distortion)
         time.sleep(1)
         centroids, probas, distortion = clvq_method_dim_1_pytorch(
-            N=N, M=M, num_epochs=nbr_iter, device='cpu'
+            N=N, M=M, num_epoch=nbr_iter, device='cpu'
         )
         print()
         print(centroids)

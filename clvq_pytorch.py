@@ -13,14 +13,14 @@ def lr(N: int, n: int):
     return a / float(a + b * (n+1.))
 
 
-def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed: int = 0):
+def clvq_method_dim_1_pytorch(N: int, M: int, num_epoch: int, device: str, seed: int = 0):
     """
     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
 
     N: number of centroids
     M: number of samples to generate
-    num_epochs: number of epochs of fixed point search
+    num_epoch: number of epochs of fixed point search
     device: device on which perform the computations: "cuda" or "cpu"
     seed: numpy seed for reproducibility
 
@@ -37,7 +37,7 @@ def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed
         centroids, index = centroids.sort()
         centroids = centroids.to(device)  # send centroids to correct device
 
-        with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as epochs:
+        with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as epochs:
             for epoch in epochs:
                 for step in range(M):
                     # Compute the vertices that separate the centroids
@@ -56,14 +56,14 @@ def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed
     return centroids.to('cpu').numpy(), probabilities, distortion
 
 
-def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: str, batch_size: int, seed: int = 0):
+def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epoch: int, device: str, batch_size: int, seed: int = 0):
     """
     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
 
     N: number of centroids
     M: number of samples to generate
-    num_epochs: number of epochs of fixed point search
+    num_epoch: number of epochs of fixed point search
     device: device on which perform the computations: "cuda" or "cpu"
     batch_size: batch size used for the approximation of \E ( gradient )
     seed: numpy seed for reproducibility
@@ -82,7 +82,7 @@ def clvq_method_dim_1_pytorch_batched(N: int, M: int, num_epochs: int, device: s
         centroids, index = centroids.sort()
         centroids = centroids.to(device)  # send centroids to correct device
 
-        with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch: {device})') as epochs:
+        with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch: {device})') as epochs:
             for epoch in epochs:
                 steps = M // batch_size
                 rest = M % batch_size
@@ -111,14 +111,14 @@ class Quantizer(nn.Module):
         self.centroids = self.centroids.to(device)  # send centroids to correct device
 
 
-def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: str, seed: int = 0):
+def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epoch: int, device: str, seed: int = 0):
     """
     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
 
     N: number of centroids
     M: number of samples to generate
-    num_epochs: number of epochs of fixed point search
+    num_epoch: number of epochs of fixed point search
     device: device on which perform the computations: "cuda" or "cpu"
     seed: numpy seed for reproducibility
 
@@ -139,7 +139,7 @@ def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: 
     # optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0)
     # optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0.9)
     # local_centroids = quantizer.centroids.clone().detach()
-    with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch autograd: {device})') as epochs:
+    with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch autograd: {device})') as epochs:
         for epoch in epochs:
             for step in range(M):
                 # print(f"Step {step+1}")
@@ -175,14 +175,14 @@ def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epochs: int, device: 
     return quantizer.centroids.clone().detach().to('cpu').numpy(), probabilities, distortion
 
 
-def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, device: str, batch_size: int, seed: int = 0):
+def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epoch: int, device: str, batch_size: int, seed: int = 0):
     """
     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
 
     N: number of centroids
     M: number of samples to generate
-    num_epochs: number of epochs of fixed point search
+    num_epoch: number of epochs of fixed point search
     device: device on which perform the computations: "cuda" or "cpu"
     batch_size: batch size used for the approximation of \E ( gradient )
     seed: numpy seed for reproducibility
@@ -201,7 +201,7 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
     quantizer.train()
     quantizer.zero_grad()
     optim = torch.optim.SGD(list(quantizer.parameters()), lr=1e-2, momentum=0)
-    with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch autograd: {device})') as epochs:
+    with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - batch size: {batch_size} - seed: {seed} (pytorch autograd: {device})') as epochs:
         for epoch in epochs:
             steps = M // batch_size
             rest = M % batch_size
@@ -236,14 +236,14 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
 ####### Old code where probas and distortion are computed inline #######
 ########################################################################
 
-# def clvq_method_dim_1_pytorch(N: int, M: int, num_epochs: int, device: str, seed: int = 0):
+# def clvq_method_dim_1_pytorch(N: int, M: int, num_epoch: int, device: str, seed: int = 0):
 #     """
 #     Apply `nbr_iter` iterations of the Competitive Learning Vector Quantization algorithm in order to build an optimal
 #      quantizer of size `N` for a Gaussian random variable. This implementation is done using torch.
 #
 #     N: number of centroids
 #     M: number of samples to generate
-#     num_epochs: number of epochs of fixed point search
+#     num_epoch: number of epochs of fixed point search
 #     device: device on which perform the computations: "cuda" or "cpu"
 #     seed: numpy seed for reproducibility
 #
@@ -263,7 +263,7 @@ def clvq_method_dim_1_pytorch_autograd_batched(N: int, M: int, num_epochs: int, 
 #         centroids, index = centroids.sort()
 #         centroids = centroids.to(device)  # send centroids to correct device
 #
-#         with trange(num_epochs, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as epochs:
+#         with trange(num_epoch, desc=f'CLVQ method - N: {N} - M: {M} - seed: {seed} (pytorch: {device})') as epochs:
 #             for epoch in epochs:
 #                 for step in range(M):
 #                     # Compute the vertices that separate the centroids

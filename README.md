@@ -13,3 +13,18 @@ Requirements `python 3.9`
 ``pip install -r requirements.txt``
 
 ![><](my_gif.gif)
+
+
+Useful from Google Colab
+-------------
+
+```
+import os
+import sys
+import shutil
+
+if os.path.exists('stochastic-methods-optimal-quantization'):
+  shutil.rmtree('stochastic-methods-optimal-quantization')
+!git clone -b pytorch_implentation_dim_1_clvq https://github.com/montest/stochastic-methods-optimal-quantization.git
+sys.path.append('stochastic-methods-optimal-quantization')
+```

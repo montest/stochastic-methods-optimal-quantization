@@ -55,7 +55,7 @@ def testing_method(fct_to_test, parameters_grid: dict, path_to_results: str):
         df_results.to_csv(path_to_results)
 
 
-def plot_results(df_grouped, M, directory_path):
+def plot_results_lloyd(df_grouped, M, directory_path):
     grouped_by_values = df_grouped.groupby(["method", "M"]).agg(list).to_dict()
     elapsed_times_per_iter_per_method = grouped_by_values.get("elapsed_time_by_iter")
     Ns_per_method = grouped_by_values.get("N")
@@ -104,7 +104,7 @@ def plot_results(df_grouped, M, directory_path):
     export_svg(plot, filename=os.path.join(directory_path, f"stochastic_lloyd_1d_method_comparison_M_{M}.svg"))
 
 
-def plot_ratios(df_grouped, M, directory_path):
+def plot_ratios_lloyd(df_grouped, M, directory_path):
     color_numpy_cpu = Viridis[3][1]
     color_pytorch_cpu = Viridis[3][2]
     color_pytorch_cuda = Viridis[3][0]
@@ -154,3 +154,126 @@ def plot_ratios(df_grouped, M, directory_path):
     # show(plot)
     export_png(plot, filename=os.path.join(directory_path, f"stochastic_lloyd_1d_ratio_comparison_M_{M}.png"))
     export_svg(plot, filename=os.path.join(directory_path, f"stochastic_lloyd_1d_ratio_comparison_M_{M}.svg"))
+
+
+def plot_results_clvq(df_grouped, M, directory_path):
+    grouped_by_values = df_grouped.groupby(["method", "M"]).agg(list).to_dict()
+    elapsed_times_per_epoch_per_method = grouped_by_values.get("elapsed_time_by_epoch")
+    Ns_per_method = grouped_by_values.get("N")
+
+    source = ColumnDataSource(
+        data=dict(
+            Ns_numpy=Ns_per_method.get(("numpy_cpu", M)),
+            numpy_cpu=elapsed_times_per_epoch_per_method.get(("numpy_cpu", M)),
+            Ns_pytorch_cpu=Ns_per_method.get(("pytorch_cpu", M)),
+            pytorch_cpu=elapsed_times_per_epoch_per_method.get(("pytorch_cpu", M)),
+            Ns_pytorch_cuda=Ns_per_method.get(("pytorch_cuda", M)),
+            pytorch_cuda=elapsed_times_per_epoch_per_method.get(("pytorch_cuda", M)),
+            Ns_pytorch_autograd_cpu=Ns_per_method.get(("pytorch_autograd_cpu", M)),
+            pytorch_autograd_cpu=elapsed_times_per_epoch_per_method.get(("pytorch_autograd_cpu", M)),
+            Ns_pytorch_autograd_cuda=Ns_per_method.get(("pytorch_autograd_cuda", M)),
+            pytorch_autograd_cuda=elapsed_times_per_epoch_per_method.get(("pytorch_autograd_cuda", M))
+        )
+    )
+
+    color_numpy_cpu = Viridis[3][1]
+    color_pytorch_cpu = Viridis[3][2]
+    color_pytorch_cuda = Viridis[3][0]
+    # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
+    color_pytorch_autograd_cpu = Vir idis[3][3]
+    color_pytorch_autograd_cuda = Viridis[3][4]
+    general_font_size = '14pt'
+    # general_font_size = '28pt'
+
+    plot = figure(plot_width=600, plot_height=500)
+    # plot = figure(plot_width=1200, plot_height=1000)
+
+    plot.xaxis.axis_label = "Grid size (N)"
+    plot.xaxis.axis_label_text_font_size = general_font_size
+
+    plot.yaxis.axis_label = "Time elapsed per epoch (in seconds)"
+    plot.yaxis.axis_label_text_font_size = general_font_size
+
+    plot.circle(x='Ns_numpy', y='numpy_cpu', source=source, fill_color=None, line_color=color_numpy_cpu, legend_label='numpy')
+    plot.line(x='Ns_numpy', y='numpy_cpu', source=source, line_color=color_numpy_cpu, legend_label='numpy')
+
+    plot.circle(x='Ns_pytorch_cpu', y='pytorch_cpu', source=source, fill_color=None, line_color=color_pytorch_cpu, legend_label='pytorch (cpu)')
+    plot.line(x='Ns_pytorch_cpu', y='pytorch_cpu', source=source, line_color=color_pytorch_cpu, legend_label='pytorch (cpu)')
+
+    plot.circle(x='Ns_pytorch_cuda', y='pytorch_cuda', source=source, fill_color=color_pytorch_cuda, line_color=color_pytorch_cuda, legend_label='pytorch (cuda: T4)')
+    plot.line(x='Ns_pytorch_cuda', y='pytorch_cuda', source=source, line_color=color_pytorch_cuda, legend_label='pytorch (cuda: T4)')
+
+    plot.circle(x='Ns_pytorch_autograd_cpu', y='pytorch_autograd_cpu', source=source, fill_color=None, line_color=color_pytorch_autograd_cpu, legend_label='pytorch autograd (cpu)')
+    plot.line(x='Ns_pytorch_autograd_cpu', y='pytorch_autograd_cpu', source=source, line_color=color_pytorch_autograd_cpu, legend_label='pytorch autograd (cpu)')
+
+    plot.circle(x='Ns_pytorch_autograd_cuda', y='pytorch_autograd_cuda', source=source, fill_color=color_pytorch_autograd_cuda, line_color=color_pytorch_autograd_cuda, legend_label='pytorch autograd (cuda: T4)')
+    plot.line(x='Ns_pytorch_autograd_cuda', y='pytorch_autograd_cuda', source=source, line_color=color_pytorch_autograd_cuda, legend_label='pytorch autograd (cuda: T4)')
+
+    plot.legend.location = "top_left"
+    plot.legend.label_text_font_size = general_font_size
+    plot.xaxis.major_label_text_font_size = general_font_size
+    plot.yaxis.major_label_text_font_size = general_font_size
+
+    # show(plot)
+    export_png(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_method_comparison_M_{M}.png"))
+    export_svg(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_method_comparison_M_{M}.svg"))
+
+
+def plot_ratios_clvq(df_grouped, M, directory_path):
+    color_numpy_cpu = Viridis[3][1]
+    color_pytorch_cpu = Viridis[3][2]
+    color_pytorch_cuda = Viridis[3][0]
+    # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
+    color_pytorch_autograd_cpu = Vir idis[3][3]
+    color_pytorch_autograd_cuda = Viridis[3][4]
+    general_font_size = '14pt'
+    # general_font_size = '28pt'
+
+    grouped_by_values = df_grouped.groupby(["method", "M"]).agg(list).to_dict()
+    elapsed_times_per_epoch_per_method = grouped_by_values.get("elapsed_time_by_epoch")
+    Ns_per_method = grouped_by_values.get("N")
+    if (Ns_per_method.get(('pytorch_cuda', M)) != Ns_per_method.get(('pytorch_cpu', M))
+            or Ns_per_method.get(('numpy_cpu', M)) != Ns_per_method.get(('pytorch_cpu', M))):
+        print(f"Cannot plot ratios for M equals {M} because N values does not match!!")
+        return
+
+    rescaled_comparisons = {
+        (method, M): np.array(elapsed_times_per_epoch_per_method.get((method, M))) / np.array(
+            elapsed_times_per_epoch_per_method.get(("pytorch_cuda", M)))
+        for method, M in elapsed_times_per_epoch_per_method
+    }
+    Ns = Ns_per_method.get(("pytorch_cuda", M))
+    Ns = [str(N) for N in Ns]
+
+    # plot = figure(x_range=Ns, plot_width=1200, plot_height=1000)
+    plot = figure(x_range=Ns, plot_width=600, plot_height=500)
+
+    plot.xaxis.axis_label = "Grid size (N)"
+    plot.xaxis.axis_label_text_font_size = general_font_size
+
+    plot.yaxis.axis_label = "Ratio over PyTorch cuda (T4) time"
+    plot.yaxis.axis_label_text_font_size = general_font_size
+
+    source = ColumnDataSource(data={
+        'Ns': Ns,
+        'pytorch_cuda': rescaled_comparisons.get(("pytorch_cuda", M)),
+        'pytorch_cpu': rescaled_comparisons.get(("pytorch_cpu", M)),
+        'pytorch_autograd_cuda': rescaled_comparisons.get(("pytorch_autograd_cuda", M)),
+        'pytorch_autograd_cpu': rescaled_comparisons.get(("pytorch_autograd_cpu", M)),
+        'numpy_cpu': rescaled_comparisons.get(("numpy_cpu", M)),
+    })
+
+    plot.vbar(x=dodge('Ns', -0.25, range=plot.x_range), top='pytorch_autograd_cuda', source=source, width=0.1, color=color_pytorch_autograd_cuda, legend_label="pytorch autograd (cuda: T4)")
+    plot.vbar(x=dodge('Ns', -0.15, range=plot.x_range), top='pytorch_autograd_cpu', source=source, width=0.1, color=color_pytorch_autograd_cpu, legend_label="pytorch autograd (cpu)")
+    plot.vbar(x=dodge('Ns', 0.0, range=plot.x_range), top='pytorch_cuda', source=source, width=0.1, color=color_pytorch_cuda, legend_label="pytorch (cuda: T4)")
+    plot.vbar(x=dodge('Ns', 0.15, range=plot.x_range), top='pytorch_cpu', source=source, width=0.1, color=color_pytorch_cpu, legend_label="pytorch (cpu)")
+    plot.vbar(x=dodge('Ns', 0.25, range=plot.x_range), top='numpy_cpu', source=source, width=0.1, color=color_numpy_cpu, legend_label="numpy")
+    plot.legend.location = "top_left"
+    plot.legend.label_text_font_size = general_font_size
+    plot.xaxis.major_label_text_font_size = general_font_size
+    plot.yaxis.major_label_text_font_size = general_font_size
+
+    # show(plot)
+    export_png(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_ratio_comparison_M_{M}.png"))
+    export_svg(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_ratio_comparison_M_{M}.svg"))
+

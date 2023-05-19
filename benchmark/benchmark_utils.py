@@ -180,7 +180,7 @@ def plot_results_clvq(df_grouped, M, directory_path):
     color_pytorch_cpu = Viridis[3][2]
     color_pytorch_cuda = Viridis[3][0]
     # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
-    color_pytorch_autograd_cpu = Vir idis[3][3]
+    color_pytorch_autograd_cpu = Viridis[3][3]
     color_pytorch_autograd_cuda = Viridis[3][4]
     general_font_size = '14pt'
     # general_font_size = '28pt'
@@ -224,7 +224,7 @@ def plot_ratios_clvq(df_grouped, M, directory_path):
     color_pytorch_cpu = Viridis[3][2]
     color_pytorch_cuda = Viridis[3][0]
     # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
-    color_pytorch_autograd_cpu = Vir idis[3][3]
+    color_pytorch_autograd_cpu = Viridis[3][3]
     color_pytorch_autograd_cuda = Viridis[3][4]
     general_font_size = '14pt'
     # general_font_size = '28pt'

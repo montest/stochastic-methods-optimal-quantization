@@ -16,7 +16,7 @@ from bokeh.transform import dodge
 chromedriver_autoinstaller.install()
 
 
-def check_existance(dict_of_values, df):
+def check_existence(dict_of_values, df):
     v = df.iloc[:, 0] == df.iloc[:, 0]
     for key, value in dict_of_values.items():
         v &= (df[key] == value)
@@ -35,7 +35,7 @@ def testing_method(fct_to_test, parameters_grid: dict, path_to_results: str):
     for permutations in permutations_dicts:
         dict_result = permutations.copy()
         dict_result["method_name"] = fct_to_test.__name__
-        if len(df_results) > 0 and check_existance(dict_result, df_results):
+        if len(df_results) > 0 and check_existence(dict_result, df_results):
             print(f"Skipping {dict_result}")
             continue
         torch.cuda.empty_cache()

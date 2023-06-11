@@ -107,8 +107,8 @@ class Quantizer(nn.Module):
         super(Quantizer, self).__init__()
         centroids = torch.randn(N)
         centroids, index = centroids.sort()
-        self.centroids = nn.Parameter(centroids.clone().detach().requires_grad_(True))
-        self.centroids = self.centroids.to(device)  # send centroids to correct device
+        self.centroids = nn.Parameter(centroids.clone().detach().to(device).requires_grad_(True))
+        # self.centroids = self.centroids.to(device)  # send centroids to correct device
 
 
 def clvq_method_dim_1_pytorch_autograd(N: int, M: int, num_epoch: int, device: str, seed: int = 0):

@@ -28,3 +28,12 @@ if os.path.exists('stochastic-methods-optimal-quantization'):
 !git clone -b pytorch_implentation_dim_1_clvq https://github.com/montest/stochastic-methods-optimal-quantization.git
 sys.path.append('stochastic-methods-optimal-quantization')
 ```
+
+```
+ #! /bin/bash
+apt update
+apt install python3-pip
+git clone -b pytorch_implentation_dim_1_clvq https://github.com/montest/stochastic-methods-optimal-quantization.git
+cd stochastic-methods-optimal-quantization
+pip3 install -r requirements.txt
+```

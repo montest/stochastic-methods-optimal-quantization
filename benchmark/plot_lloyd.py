@@ -5,7 +5,7 @@ import pandas as pd
 from benchmark.benchmark_utils import plot_results_lloyd, plot_ratios_lloyd
 
 if __name__ == "__main__":
-    directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/"
+    directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/benchmark/"
     path_to_results = os.path.join(directory_path, "final_results_lloyd.csv")
     if os.path.exists(path_to_results) and os.path.getsize(path_to_results) > 0:
         df_results = pd.read_csv(path_to_results, index_col=0)

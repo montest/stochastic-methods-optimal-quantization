@@ -27,7 +27,7 @@ basic_parameters_grid = {
     "M": [100000, 200000, 500000, 1000000],
     "seed": [0, 1, 2],
     "N": [10, 20, 50, 100, 200, 500],
-    "num_epoch": [2],
+    "num_epoch": [1],
 }
 pytorch_parameters_grid = basic_parameters_grid.copy()
 pytorch_parameters_grid["device"] = ["cuda", "cpu"]

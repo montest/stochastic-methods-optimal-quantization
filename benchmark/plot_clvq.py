@@ -5,8 +5,9 @@ import pandas as pd
 from benchmark.benchmark_utils import plot_results_clvq, plot_ratios_clvq
 
 if __name__ == "__main__":
-    directory_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/"
-    path_to_results = os.path.join(directory_path, "final_results_clvq.csv")
+    results_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/benchmark/"
+    plot_path = "/Users/thibautmontes/GitHub/stochastic-methods-optimal-quantization/_output/gaussian/pytorch/clvq/"
+    path_to_results = os.path.join(results_path, "final_results_clvq.csv")
     if os.path.exists(path_to_results) and os.path.getsize(path_to_results) > 0:
         df_results = pd.read_csv(path_to_results, index_col=0)
     else:
@@ -20,19 +21,14 @@ if __name__ == "__main__":
         inplace=True
     )
     df_results["elapsed_time_by_epoch"] = df_results.loc[:, "elapsed_time"] / df_results.loc[:, "num_epoch"]
-    df_results = df_results[df_results.num_epoch == 2]
+    df_results = df_results[df_results.num_epoch == 1]
     df_results.drop(labels=["method_name", "device", "num_epoch", "elapsed_time"], axis=1, inplace=True)
 
     df_grouped = df_results.groupby(['N', 'M', 'method'])['elapsed_time_by_epoch'].mean()
     df_grouped = df_grouped.reset_index()
-    df_grouped.to_csv(os.path.join(directory_path, "grouped_final_results_clvq.csv"))
+    df_grouped.to_csv(os.path.join(results_path, "grouped_final_results_clvq.csv"))
 
-    plot_results_clvq(df_grouped=df_grouped, M=100000, directory_path=directory_path)
-    plot_results_clvq(df_grouped=df_grouped, M=200000, directory_path=directory_path)
-    plot_results_clvq(df_grouped=df_grouped, M=500000, directory_path=directory_path)
-    plot_results_clvq(df_grouped=df_grouped, M=1000000, directory_path=directory_path)
-
-    plot_ratios_clvq(df_grouped=df_grouped, M=100000, directory_path=directory_path)
-    plot_ratios_clvq(df_grouped=df_grouped, M=200000, directory_path=directory_path)
-    plot_ratios_clvq(df_grouped=df_grouped, M=500000, directory_path=directory_path)
-    plot_ratios_clvq(df_grouped=df_grouped, M=1000000, directory_path=directory_path)
+    Ms = set(df_results.M)
+    for M in Ms:
+        plot_results_clvq(df_grouped=df_grouped, M=M, directory_path=plot_path)
+        plot_ratios_clvq(df_grouped=df_grouped, M=M, directory_path=plot_path)

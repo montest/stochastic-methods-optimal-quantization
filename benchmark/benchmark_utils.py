@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import torch
 from bokeh.io import export_svg, export_png
-from bokeh.models import ColumnDataSource
+from bokeh.models import ColumnDataSource, Legend
 from bokeh.palettes import Viridis
 from bokeh.plotting import figure
 from bokeh.transform import dodge
@@ -176,17 +176,16 @@ def plot_results_clvq(df_grouped, M, directory_path):
         )
     )
 
-    color_numpy_cpu = Viridis[3][1]
-    color_pytorch_cpu = Viridis[3][2]
-    color_pytorch_cuda = Viridis[3][0]
-    # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
-    color_pytorch_autograd_cpu = Viridis[3][3]
-    color_pytorch_autograd_cuda = Viridis[3][4]
+    color_numpy_cpu = Viridis[5][1]
+    color_pytorch_cpu = Viridis[5][2]
+    color_pytorch_cuda = Viridis[5][0]
+    color_pytorch_autograd_cpu = Viridis[5][3]
+    color_pytorch_autograd_cuda = Viridis[5][4]
     general_font_size = '14pt'
     # general_font_size = '28pt'
 
-    plot = figure(plot_width=600, plot_height=500)
-    # plot = figure(plot_width=1200, plot_height=1000)
+    plot = figure(plot_width=1000, plot_height=500)
+    plot.add_layout(Legend(), 'right')
 
     plot.xaxis.axis_label = "Grid size (N)"
     plot.xaxis.axis_label_text_font_size = general_font_size
@@ -209,23 +208,24 @@ def plot_results_clvq(df_grouped, M, directory_path):
     plot.circle(x='Ns_pytorch_autograd_cuda', y='pytorch_autograd_cuda', source=source, fill_color=color_pytorch_autograd_cuda, line_color=color_pytorch_autograd_cuda, legend_label='pytorch autograd (cuda: T4)')
     plot.line(x='Ns_pytorch_autograd_cuda', y='pytorch_autograd_cuda', source=source, line_color=color_pytorch_autograd_cuda, legend_label='pytorch autograd (cuda: T4)')
 
-    plot.legend.location = "top_left"
+    # plot.legend.location = "top_left"
     plot.legend.label_text_font_size = general_font_size
     plot.xaxis.major_label_text_font_size = general_font_size
     plot.yaxis.major_label_text_font_size = general_font_size
 
     # show(plot)
+    if not os.path.exists(directory_path):
+        os.mkdir(directory_path)
     export_png(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_method_comparison_M_{M}.png"))
     export_svg(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_method_comparison_M_{M}.svg"))
 
 
 def plot_ratios_clvq(df_grouped, M, directory_path):
-    color_numpy_cpu = Viridis[3][1]
-    color_pytorch_cpu = Viridis[3][2]
-    color_pytorch_cuda = Viridis[3][0]
-    # todo: verifier les couleurs ici (peut etre qu'il faut utiliser Viridis[5][0]
-    color_pytorch_autograd_cpu = Viridis[3][3]
-    color_pytorch_autograd_cuda = Viridis[3][4]
+    color_numpy_cpu = Viridis[5][1]
+    color_pytorch_cpu = Viridis[5][2]
+    color_pytorch_cuda = Viridis[5][0]
+    color_pytorch_autograd_cpu = Viridis[5][3]
+    color_pytorch_autograd_cuda = Viridis[5][4]
     general_font_size = '14pt'
     # general_font_size = '28pt'
 
@@ -239,14 +239,14 @@ def plot_ratios_clvq(df_grouped, M, directory_path):
 
     rescaled_comparisons = {
         (method, M): np.array(elapsed_times_per_epoch_per_method.get((method, M))) / np.array(
-            elapsed_times_per_epoch_per_method.get(("pytorch_cuda", M)))
+            elapsed_times_per_epoch_per_method.get(("numpy_cpu", M)))
         for method, M in elapsed_times_per_epoch_per_method
     }
     Ns = Ns_per_method.get(("pytorch_cuda", M))
     Ns = [str(N) for N in Ns]
 
-    # plot = figure(x_range=Ns, plot_width=1200, plot_height=1000)
-    plot = figure(x_range=Ns, plot_width=600, plot_height=500)
+    plot = figure(x_range=Ns, plot_width=1000, plot_height=500)
+    plot.add_layout(Legend(), 'right')
 
     plot.xaxis.axis_label = "Grid size (N)"
     plot.xaxis.axis_label_text_font_size = general_font_size
@@ -268,12 +268,14 @@ def plot_ratios_clvq(df_grouped, M, directory_path):
     plot.vbar(x=dodge('Ns', 0.0, range=plot.x_range), top='pytorch_cuda', source=source, width=0.1, color=color_pytorch_cuda, legend_label="pytorch (cuda: T4)")
     plot.vbar(x=dodge('Ns', 0.15, range=plot.x_range), top='pytorch_cpu', source=source, width=0.1, color=color_pytorch_cpu, legend_label="pytorch (cpu)")
     plot.vbar(x=dodge('Ns', 0.25, range=plot.x_range), top='numpy_cpu', source=source, width=0.1, color=color_numpy_cpu, legend_label="numpy")
-    plot.legend.location = "top_left"
+    # plot.legend.location = "top_left"
     plot.legend.label_text_font_size = general_font_size
     plot.xaxis.major_label_text_font_size = general_font_size
     plot.yaxis.major_label_text_font_size = general_font_size
 
     # show(plot)
+    if not os.path.exists(directory_path):
+        os.mkdir(directory_path)
     export_png(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_ratio_comparison_M_{M}.png"))
     export_svg(plot, filename=os.path.join(directory_path, f"stochastic_clvq_1d_ratio_comparison_M_{M}.svg"))
 

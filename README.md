@@ -38,8 +38,6 @@ print(device)
 device.reset()
 ```
 
-```
-
 Download filed from google colab
 ```
 from google.colab import files

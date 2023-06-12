@@ -30,6 +30,23 @@ sys.path.append('stochastic-methods-optimal-quantization')
 ```
 
 ```
+!pip install numba
+from numba import cuda
+# all of your code and execution
+device = cuda.get_current_device() 
+print(device)
+device.reset()
+```
+
+```
+
+Download filed from google colab
+```
+from google.colab import files
+path_to_results = "warm_up_results_clvq.csv"
+files.download(path_to_results)
+time.sleep(10)
+```
  #! /bin/bash
 apt update
 apt install python3-pip

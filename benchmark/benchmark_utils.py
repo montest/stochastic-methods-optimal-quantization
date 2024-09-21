@@ -251,7 +251,7 @@ def plot_ratios_clvq(df_grouped, M, directory_path):
     plot.xaxis.axis_label = "Grid size (N)"
     plot.xaxis.axis_label_text_font_size = general_font_size
 
-    plot.yaxis.axis_label = "Ratio over PyTorch cuda (T4) time"
+    plot.yaxis.axis_label = "Ratio over numpy time"
     plot.yaxis.axis_label_text_font_size = general_font_size
 
     source = ColumnDataSource(data={
